@@ -6,7 +6,7 @@ const form = document.querySelector('.form'),
 
 
 //Show Success
-function shwosucces(input){
+function showsuccess(input){
     const formcontrol = input.parentElement;
     formcontrol.className= "form-control success";
 }
@@ -34,15 +34,62 @@ function checkrequired(inputarr){
 
 
         if(input.value === ""){
-            showerror(input,"Something is required");
+            // showerror(input,"Something is required");
+            showerror(input,`${getfieldname(input)} is required`);
         }else{
-            shwosucces(input);
+            showsuccess(input);
         }
         
     });
 
 }
 
+
+//Get Fields Name
+function getfieldname(input){
+
+    // return input.id.toUpperCase();
+
+    return input.name.charAt(0).toUpperCase() + input.id.slice(1);
+
+}
+
+
+
+// check valid email (using regular express)
+function checkemail(input){
+
+    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    
+    if(re.test(input.value)){
+        showsuccess(input);
+    }else{
+        showerror(input,"Email is not valid");
+    }
+
+}
+
+
+//Check password match
+function checkpasswordmatch(input1,input2){
+
+    if(input1.value !== input2.value){
+        showerror(input2,"Password do not match");
+    }
+}
+
+//Check Length
+function checklength(input,min,max){
+
+    if(input.value.length < min){
+        showerror(input,`${getfieldname(input)} must be at least ${min} characters`);
+    }else if(input.value.length > max){
+        showerror(input,`${getfieldname(input)} must be at least ${max} characters`);
+    }else{
+        showsuccess(input);
+    }
+
+}
 
 
 
@@ -52,7 +99,13 @@ form.addEventListener('submit',function(e){
 
     checkrequired([username,email,password,cfmpassword]);
 
+    checklength(username,3,15);
+
+    checkemail(email);
+
+    checklength(password,6,25);
+
+    checkpasswordmatch(password,cfmpassword);
+
     e.preventDefault();
 });
-
-
